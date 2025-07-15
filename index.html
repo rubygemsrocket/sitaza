@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Pelajaran SD</title>
+    <title>Jadwal Pelajaran SDN PANGKAH 4 Kelas 3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -191,129 +191,23 @@
         }
         
         @media print {
-            @page {
-                size: 33cm 21cm; /* F4 horizontal: 33cm x 21cm */
-                margin: 1cm;
+            .header, .footer {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
             }
             
-            body {
-                background: white !important;
-                font-size: 12px;
-                line-height: 1.2;
+            .action-buttons, .edit-instructions {
+                display: none !important;
             }
             
             .container {
                 box-shadow: none !important;
                 margin: 0 !important;
-                padding: 0 !important;
-                max-width: 100% !important;
-                background: white !important;
-                border-radius: 0 !important;
-                page-break-inside: avoid;
-            }
-            
-            .header {
-                background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%) !important;
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                padding: 15px !important;
-                margin-bottom: 15px !important;
-                border-radius: 0 !important;
-            }
-            
-            .header h1 {
-                font-size: 1.8em !important;
-                margin-bottom: 5px !important;
-            }
-            
-            .header p {
-                font-size: 1em !important;
-            }
-            
-            .action-buttons, .edit-instructions, .loading {
-                display: none !important;
-            }
-            
-            .schedule-grid {
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 12px !important;
-                padding: 0 !important;
-                page-break-inside: avoid !important;
             }
             
             .day-card {
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-                padding: 10px !important;
-                margin: 0 !important;
-                border-radius: 8px !important;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-                background: white !important;
-                border: 2px solid !important;
-                font-size: 11px !important;
-            }
-            
-            .day-card.senin { border-color: #e17055 !important; }
-            .day-card.selasa { border-color: #00b894 !important; }
-            .day-card.rabu { border-color: #fdcb6e !important; }
-            .day-card.kamis { border-color: #6c5ce7 !important; }
-            .day-card.jumat { border-color: #fd79a8 !important; }
-            .day-card.sabtu { border-color: #74b9ff !important; }
-            
-            .day-header {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                padding: 8px !important;
-                margin-bottom: 10px !important;
-                font-size: 1.1em !important;
-                border-radius: 6px !important;
-            }
-            
-            .senin .day-header { background: linear-gradient(135deg, #e17055, #d63031) !important; }
-            .selasa .day-header { background: linear-gradient(135deg, #00b894, #00a085) !important; }
-            .rabu .day-header { background: linear-gradient(135deg, #fdcb6e, #e17055) !important; }
-            .kamis .day-header { background: linear-gradient(135deg, #6c5ce7, #5f3dc4) !important; }
-            .jumat .day-header { background: linear-gradient(135deg, #fd79a8, #e84393) !important; }
-            .sabtu .day-header { background: linear-gradient(135deg, #74b9ff, #0984e3) !important; }
-            
-            .subject-item {
-                margin: 4px 0 !important;
-                padding: 6px 8px !important;
-                font-size: 10px !important;
-                border-radius: 4px !important;
-                background: #f8f9fa !important;
-                border-left: 3px solid !important;
-            }
-            
-            .subject-number {
-                width: 18px !important;
-                height: 18px !important;
-                font-size: 9px !important;
-                margin-right: 8px !important;
-            }
-            
-            .subject-name {
-                font-size: 10px !important;
-                font-weight: bold !important;
-            }
-            
-            .subject-item.istirahat {
-                background: linear-gradient(135deg, #fff7e6, #fef5e7) !important;
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            .footer {
-                background: #f8f9fa !important;
-                padding: 10px !important;
-                margin-top: 15px !important;
-                text-align: center !important;
-                font-size: 11px !important;
-                border-radius: 0 !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
         }
         
@@ -469,24 +363,12 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📚 Jadwal Pelajaran SDN PANGKAH 4 Kelas 3📚</h1>
+            <h1>📚 Jadwal Pelajaran SDN PANGKAH 4 Kelas 3 📚</h1>
             <p>Semangat belajar setiap hari! 🌟</p>
-            <div class="action-buttons">
-                <button class="btn download-btn" id="downloadPDF">
-                    📥 Download PDF
-                </button>
-                <button class="btn print-btn" id="printBtn">
-                    🖨️ Print
-                </button>
-                <button class="btn edit-btn" id="editBtn">
-                    ✏️ Edit Teks
-                </button>
-            </div>
+            <button class="download-btn" id="downloadPDF">
+                📥 Download PDF
+            </button>
             <div class="loading" id="loadingText">Membuat PDF... Mohon tunggu sebentar ⏳</div>
-        </div>
-        
-        <div class="edit-instructions" id="editInstructions">
-            📝 Mode Edit Aktif! Klik pada nama mata pelajaran untuk mengeditnya. Klik "Selesai Edit" untuk menyimpan perubahan.
         </div>
         
         <div class="schedule-grid">
@@ -693,9 +575,6 @@
     </div>
     
     <script>
-        let editMode = false;
-        
-        // Download PDF functionality
         document.getElementById('downloadPDF').addEventListener('click', function() {
             const button = this;
             const loadingText = document.getElementById('loadingText');
@@ -763,259 +642,6 @@
                 loadingText.style.display = 'none';
             });
         });
-        
-        // Print functionality
-        document.getElementById('printBtn').addEventListener('click', function() {
-            // Create a custom print window for better control
-            const printWindow = window.open('', '_blank');
-            const originalContent = document.documentElement.outerHTML;
-            
-            // Hide action buttons and edit instructions before printing
-            const actionButtons = document.querySelector('.action-buttons');
-            const editInstructions = document.getElementById('editInstructions');
-            const loadingText = document.getElementById('loadingText');
-            
-            actionButtons.style.display = 'none';
-            editInstructions.style.display = 'none';
-            loadingText.style.display = 'none';
-            
-            // Add print-specific styles
-            const printStyles = `
-                <style>
-                    @media print {
-                        @page {
-                            size: 33cm 21cm; /* F4 horizontal */
-                            margin: 1cm;
-                        }
-                        
-                        body {
-                            background: white !important;
-                            font-size: 12px;
-                            line-height: 1.2;
-                            padding: 0;
-                            margin: 0;
-                        }
-                        
-                        .container {
-                            box-shadow: none !important;
-                            margin: 0 !important;
-                            padding: 0 !important;
-                            max-width: 100% !important;
-                            background: white !important;
-                            border-radius: 0 !important;
-                            page-break-inside: avoid;
-                        }
-                        
-                        .schedule-grid {
-                            display: grid !important;
-                            grid-template-columns: repeat(3, 1fr) !important;
-                            gap: 12px !important;
-                            padding: 0 !important;
-                            page-break-inside: avoid !important;
-                        }
-                        
-                        .day-card {
-                            page-break-inside: avoid !important;
-                            break-inside: avoid !important;
-                            padding: 10px !important;
-                            margin: 0 !important;
-                            border-radius: 8px !important;
-                            font-size: 11px !important;
-                        }
-                        
-                        .subject-item {
-                            margin: 4px 0 !important;
-                            padding: 6px 8px !important;
-                            font-size: 10px !important;
-                        }
-                        
-                        .subject-number {
-                            width: 18px !important;
-                            height: 18px !important;
-                            font-size: 9px !important;
-                        }
-                        
-                        .subject-name {
-                            font-size: 10px !important;
-                        }
-                    }
-                </style>
-            `;
-            
-            // Show print dialog with F4 landscape settings
-            const printDialog = () => {
-                // Try to set print settings programmatically
-                if (window.chrome) {
-                    // Chrome-specific settings
-                    const settings = {
-                        shouldPrintBackgrounds: true,
-                        shouldPrintSelectionOnly: false,
-                        mediaSize: {
-                            width_microns: 330000, // 33cm in microns
-                            height_microns: 210000  // 21cm in microns
-                        },
-                        landscape: true,
-                        marginsType: 1, // minimum margins
-                        scalingType: 2, // fit to page
-                        copies: 1
-                    };
-                }
-                
-                // Standard print dialog
-                window.print();
-            };
-            
-            // Add instruction for user
-            const instructionDiv = document.createElement('div');
-            instructionDiv.innerHTML = `
-                <div style="
-                    position: fixed;
-                    top: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: #fd79a8;
-                    color: white;
-                    padding: 15px 25px;
-                    border-radius: 10px;
-                    z-index: 1000;
-                    font-weight: bold;
-                    text-align: center;
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                ">
-                    📄 Pastikan pilih ukuran kertas F4 dan orientasi Landscape di dialog print!
-                </div>
-            `;
-            document.body.appendChild(instructionDiv);
-            
-            // Auto-remove instruction after 5 seconds
-            setTimeout(() => {
-                if (instructionDiv) {
-                    instructionDiv.remove();
-                }
-            }, 5000);
-            
-            // Print the page
-            printDialog();
-            
-            // Restore buttons after printing
-            setTimeout(() => {
-                actionButtons.style.display = 'flex';
-                if (editMode) {
-                    editInstructions.style.display = 'block';
-                }
-            }, 1000);
-        });
-        
-        // Edit functionality
-        document.getElementById('editBtn').addEventListener('click', function() {
-            const button = this;
-            const editInstructions = document.getElementById('editInstructions');
-            const subjectNames = document.querySelectorAll('.subject-name');
-            
-            if (!editMode) {
-                // Enter edit mode
-                editMode = true;
-                button.innerHTML = '✅ Selesai Edit';
-                button.style.background = 'linear-gradient(135deg, #00b894, #00a085)';
-                editInstructions.classList.add('show');
-                
-                // Make subject names editable
-                subjectNames.forEach(subject => {
-                    subject.contentEditable = true;
-                    subject.classList.add('editable');
-                    subject.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            this.blur();
-                        }
-                    });
-                });
-                
-                // Add edit mode styling to cards
-                document.querySelectorAll('.day-card').forEach(card => {
-                    card.classList.add('edit-mode');
-                });
-                
-            } else {
-                // Exit edit mode
-                editMode = false;
-                button.innerHTML = '✏️ Edit Teks';
-                button.style.background = 'linear-gradient(135deg, #fd79a8, #e84393)';
-                editInstructions.classList.remove('show');
-                
-                // Make subject names non-editable
-                subjectNames.forEach(subject => {
-                    subject.contentEditable = false;
-                    subject.classList.remove('editable');
-                });
-                
-                // Remove edit mode styling from cards
-                document.querySelectorAll('.day-card').forEach(card => {
-                    card.classList.remove('edit-mode');
-                });
-                
-                // Save changes to localStorage (optional)
-                saveScheduleData();
-            }
-        });
-        
-        // Save schedule data (in memory storage)
-        function saveScheduleData() {
-            const scheduleData = {};
-            document.querySelectorAll('.day-card').forEach(card => {
-                const dayClass = card.classList[1]; // Get day class (senin, selasa, etc.)
-                const subjects = [];
-                card.querySelectorAll('.subject-name').forEach(subject => {
-                    subjects.push(subject.textContent);
-                });
-                scheduleData[dayClass] = subjects;
-            });
-            
-            // Store in memory (you can modify this to use a database or file storage)
-            window.scheduleData = scheduleData;
-            
-            // Show success message
-            const successMsg = document.createElement('div');
-            successMsg.innerHTML = '✅ Jadwal berhasil disimpan!';
-            successMsg.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #00b894;
-                color: white;
-                padding: 15px 25px;
-                border-radius: 10px;
-                z-index: 1000;
-                font-weight: bold;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            `;
-            document.body.appendChild(successMsg);
-            
-            setTimeout(() => {
-                successMsg.remove();
-            }, 3000);
-        }
-        
-        // Load schedule data on page load (optional)
-        function loadScheduleData() {
-            if (window.scheduleData) {
-                Object.keys(window.scheduleData).forEach(dayClass => {
-                    const dayCard = document.querySelector(`.${dayClass}`);
-                    if (dayCard) {
-                        const subjects = dayCard.querySelectorAll('.subject-name');
-                        const savedSubjects = window.scheduleData[dayClass];
-                        subjects.forEach((subject, index) => {
-                            if (savedSubjects[index]) {
-                                subject.textContent = savedSubjects[index];
-                            }
-                        });
-                    }
-                });
-            }
-        }
-        
-        // Load data when page loads
-        window.addEventListener('load', loadScheduleData);
     </script>
 </body>
 </html>
