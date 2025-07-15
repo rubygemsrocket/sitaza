@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Pelajaran SD</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) translateY(-50%) rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+            background: linear-gradient(135deg, #00a085, #00b894);
+        }
+        
+        .download-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .download-btn:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading {
+            display: none;
+            font-size: 0.9em;
+            color: #00b894;
+            margin-top: 10px;
+        }
+        
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .day-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .day-card.senin { border-color: #e17055; }
+        .day-card.selasa { border-color: #00b894; }
+        .day-card.rabu { border-color: #fdcb6e; }
+        .day-card.kamis { border-color: #6c5ce7; }
+        .day-card.jumat { border-color: #fd79a8; }
+        .day-card.sabtu { border-color: #74b9ff; }
+        
+        .day-header {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .senin .day-header { background: linear-gradient(135deg, #e17055, #d63031); }
+        .selasa .day-header { background: linear-gradient(135deg, #00b894, #00a085); }
+        .rabu .day-header { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+        .kamis .day-header { background: linear-gradient(135deg, #6c5ce7, #5f3dc4); }
+        .jumat .day-header { background: linear-gradient(135deg, #fd79a8, #e84393); }
+        .sabtu .day-header { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        
+        .subject-list {
+            list-style: none;
+        }
+        
+        .subject-item {
+            background: #f8f9fa;
+            margin: 8px 0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .subject-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .subject-number {
+            background: #495057;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .subject-name {
+            font-weight: bold;
+            color: #2d3436;
+            font-size: 1em;
+        }
+        
+        .subject-item.upacara { border-left-color: #e17055; }
+        .subject-item.pjok { border-left-color: #00b894; }
+        .subject-item.istirahat { 
+            border-left-color: #fdcb6e; 
+            background: linear-gradient(135deg, #fff7e6, #fef5e7);
+        }
+        .subject-item.indonesia { border-left-color: #d63031; }
+        .subject-item.inggris { border-left-color: #74b9ff; }
+        .subject-item.pancasila { border-left-color: #a29bfe; }
+        .subject-item.matematika { border-left-color: #fd79a8; }
+        .subject-item.ipas { border-left-color: #00cec9; }
+        .subject-item.sbdp { border-left-color: #ff7675; }
+        .subject-item.agama { border-left-color: #6c5ce7; }
+        .subject-item.jawa { border-left-color: #fdcb6e; }
+        
+        .istirahat .subject-name {
+            color: #e17055;
+            font-weight: bold;
+        }
+        
+        .istirahat .subject-number {
+            background: #fdcb6e;
+            color: #2d3436;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #636e72;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .schedule-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+        }
+        
+        .school-icons {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Jadwal Pelajaran SD 📚</h1>
+            <p>Semangat belajar setiap hari! 🌟</p>
+            <button class="download-btn" id="downloadPDF">
+                📥 Download PDF
+            </button>
+            <div class="loading" id="loadingText">Membuat PDF... Mohon tunggu sebentar ⏳</div>
+        </div>
+        
+        <div class="schedule-grid">
+            <div class="day-card senin">
+                <div class="day-header">
+                    🌅 SENIN
+                </div>
+                <ul class="subject-list">
+                    <li class="subject-item upacara">
+                        <div class="subject-number">1</div>
+                        <div class="subject-name">Upacara</div>
+                    </li>
+                    <li class="subject-item pjok">
+                        <div class="subject-number">2</div>
+                        <div class="subject-name">PJOK</div>
+                    </li>
+                    <li class="subject-item pjok">
+                        <div class="subject-number">3</div>
+                        <div class="subject-name">PJOK</div>
+                    </li>
+                    <li class="subject-item istirahat">
+                        <div class="subject-number">4</div>
+                        <div class="subject-name">ISTIRAHAT</div>
+                    </li>
+                    <li class="subject-item pjok">
+                        <div class="subject-number">5</div>
+                        <div class="subject-name">PJOK</div>
+                    </li>
+                    <li class="subject-item indonesia">
+                        <div class="subject-number">6</div>
+                        <div class="subject-name">B. INDONESIA</div>
+                    </li>
+                    <li class="subject-item indonesia">
+                        <div class="subject-number">7</div>
+                        <div class="subject-name">B. INDONESIA</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="day-card selasa">
+                <div class="day-header">
+                    🔥 SELASA
+                </div>
+                <ul class="subject-list">
+                    <li class="subject-item inggris">
+                        <div class="subject-number">1</div>
+                        <div class="subject-name">B. INGGRIS</div>
+                    </li>
+                    <li class="subject-item inggris">
+                        <div class="subject-number">2</div>
+                        <div class="subject-name">B. INGGRIS</div>
+                    </li>
+                    <li class="subject-item pancasila">
+                        <div class="subject-number">3</div>
+                        <div class="subject-name">P. PANCASILA</div>
+                    </li>
+                    <li class="subject-item istirahat">
+                        <div class="subject-number">4</div>
+                        <div class="subject-name">ISTIRAHAT</div>
+                    </li>
+                    <li class="subject-item indonesia">
+                        <div class="subject-number">5</div>
+                        <div class="subject-name">B. INDONESIA</div>
+                    </li>
+                    <li class="subject-item indonesia">
+                        <div class="subject-number">6</div>
+                        <div class="subject-name">B. INDONESIA</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="day-card rabu">
+                <div class="day-header">
+                    ⚡ RABU
+                </div>
+                <ul class="subject-list">
+                    <li class="subject-item matematika">
+                        <div class="subject-number">1</div>
+                        <div class="subject-name">MATEMATIKA</div>
+                    </li>
+                    <li class="subject-item matematika">
+                        <div class="subject-number">2</div>
+                        <div class="subject-name">MATEMATIKA</div>
+                    </li>
+                    <li class="subject-item matematika">
+                        <div class="subject-number">3</div>
+                        <div class="subject-name">MATEMATIKA</div>
+                    </li>
+                    <li class="subject-item istirahat">
+                        <div class="subject-number">4</div>
+                        <div class="subject-name">ISTIRAHAT</div>
+                    </li>
+                    <li class="subject-item indonesia">
+                        <div class="subject-number">5</div>
+                        <div class="subject-name">B. INDONESIA</div>
+                    </li>
+                    <li class="subject-item indonesia">
+                        <div class="subject-number">6</div>
+                        <div class="subject-name">B. INDONESIA</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="day-card kamis">
+                <div class="day-header">
+                    🌟 KAMIS
+                </div>
+                <ul class="subject-list">
+                    <li class="subject-item matematika">
+                        <div class="subject-number">1</div>
+                        <div class="subject-name">MATEMATIKA</div>
+                    </li>
+                    <li class="subject-item matematika">
+                        <div class="subject-number">2</div>
+                        <div class="subject-name">MATEMATIKA</div>
+                    </li>
+                    <li class="subject-item ipas">
+                        <div class="subject-number">3</div>
+                        <div class="subject-name">IPAS</div>
+                    </li>
+                    <li class="subject-item istirahat">
+                        <div class="subject-number">4</div>
+                        <div class="subject-name">ISTIRAHAT</div>
+                    </li>
+                    <li class="subject-item ipas">
+                        <div class="subject-number">5</div>
+                        <div class="subject-name">IPAS</div>
+                    </li>
+                    <li class="subject-item pancasila">
+                        <div class="subject-number">6</div>
+                        <div class="subject-name">P. PANCASILA</div>
+                    </li>
+                    <li class="subject-item pancasila">
+                        <div class="subject-number">7</div>
+                        <div class="subject-name">P. PANCASILA</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="day-card jumat">
+                <div class="day-header">
+                    🎉 JUM'AT
+                </div>
+                <ul class="subject-list">
+                    <li class="subject-item ipas">
+                        <div class="subject-number">1</div>
+                        <div class="subject-name">IPAS</div>
+                    </li>
+                    <li class="subject-item ipas">
+                        <div class="subject-number">2</div>
+                        <div class="subject-name">IPAS</div>
+                    </li>
+                    <li class="subject-item ipas">
+                        <div class="subject-number">3</div>
+                        <div class="subject-name">IPAS</div>
+                    </li>
+                    <li class="subject-item istirahat">
+                        <div class="subject-number">4</div>
+                        <div class="subject-name">ISTIRAHAT</div>
+                    </li>
+                    <li class="subject-item sbdp">
+                        <div class="subject-number">5</div>
+                        <div class="subject-name">SBDP</div>
+                    </li>
+                    <li class="subject-item sbdp">
+                        <div class="subject-number">6</div>
+                        <div class="subject-name">SBDP</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="day-card sabtu">
+                <div class="day-header">
+                    🎨 SABTU
+                </div>
+                <ul class="subject-list">
+                    <li class="subject-item agama">
+                        <div class="subject-number">1</div>
+                        <div class="subject-name">P. AGAMA</div>
+                    </li>
+                    <li class="subject-item agama">
+                        <div class="subject-number">2</div>
+                        <div class="subject-name">P. AGAMA</div>
+                    </li>
+                    <li class="subject-item agama">
+                        <div class="subject-number">3</div>
+                        <div class="subject-name">P. AGAMA</div>
+                    </li>
+                    <li class="subject-item jawa">
+                        <div class="subject-number">4</div>
+                        <div class="subject-name">B. JAWA</div>
+                    </li>
+                    <li class="subject-item jawa">
+                        <div class="subject-number">5</div>
+                        <div class="subject-name">B. JAWA</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>💪 Semangat belajar! Raih prestasi terbaik! 🏆</p>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('downloadPDF').addEventListener('click', function() {
+            const button = this;
+            const loadingText = document.getElementById('loadingText');
+            
+            // Disable button and show loading
+            button.disabled = true;
+            button.innerHTML = '⏳ Membuat PDF...';
+            loadingText.style.display = 'block';
+            
+            // Get the container element
+            const container = document.querySelector('.container');
+            
+            // Configure html2canvas options
+            const options = {
+                scale: 2, // Higher quality
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#74b9ff',
+                width: container.offsetWidth,
+                height: container.offsetHeight
+            };
+            
+            // Create PDF
+            html2canvas(container, options).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                
+                // Calculate dimensions
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                
+                // Create PDF
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                let position = 0;
+                
+                // Add image to PDF
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                // Add new pages if content is longer than one page
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // Save PDF
+                pdf.save('Jadwal_Pelajaran_SD.pdf');
+                
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = '📥 Download PDF';
+                loadingText.style.display = 'none';
+                
+            }).catch(error => {
+                console.error('Error generating PDF:', error);
+                alert('Terjadi kesalahan saat membuat PDF. Silakan coba lagi.');
+                
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = '📥 Download PDF';
+                loadingText.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
