@@ -68,8 +68,15 @@
             z-index: 1;
         }
         
-        .download-btn {
-            background: linear-gradient(135deg, #00b894, #00a085);
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .btn {
             color: white;
             border: none;
             padding: 15px 30px;
@@ -77,31 +84,58 @@
             font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
             position: relative;
             z-index: 1;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            background: #ddd !important;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
         }
         
         .download-btn:hover {
-            transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
             background: linear-gradient(135deg, #00a085, #00b894);
         }
         
-        .download-btn:active {
-            transform: translateY(-1px);
+        .print-btn {
+            background: linear-gradient(135deg, #6c5ce7, #5f3dc4);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
         }
         
-        .download-btn:disabled {
-            background: #ddd;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .print-btn:hover {
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+            background: linear-gradient(135deg, #5f3dc4, #6c5ce7);
+        }
+        
+        .edit-btn {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            box-shadow: 0 5px 15px rgba(253, 121, 168, 0.3);
+        }
+        
+        .edit-btn:hover {
+            box-shadow: 0 8px 25px rgba(253, 121, 168, 0.4);
+            background: linear-gradient(135deg, #e84393, #fd79a8);
         }
         
         .loading {
@@ -109,6 +143,72 @@
             font-size: 0.9em;
             color: #00b894;
             margin-top: 10px;
+        }
+        
+        .edit-mode {
+            border: 2px dashed #fd79a8;
+            background: #fff5f8;
+            animation: editGlow 2s infinite;
+        }
+        
+        @keyframes editGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(253, 121, 168, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(253, 121, 168, 0.6); }
+        }
+        
+        .editable {
+            outline: none;
+            min-height: 20px;
+            padding: 2px;
+            border-radius: 3px;
+        }
+        
+        .editable:focus {
+            background: rgba(253, 121, 168, 0.1);
+            border: 1px solid #fd79a8;
+        }
+        
+        .edit-instructions {
+            background: linear-gradient(135deg, #fff5f8, #ffe8f0);
+            border: 2px solid #fd79a8;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px;
+            text-align: center;
+            color: #d63031;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .edit-instructions.show {
+            display: block;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media print {
+            .header, .footer {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            .action-buttons, .edit-instructions {
+                display: none !important;
+            }
+            
+            .container {
+                box-shadow: none !important;
+                margin: 0 !important;
+            }
+            
+            .day-card {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
         }
         
         .schedule-grid {
@@ -265,10 +365,22 @@
         <div class="header">
             <h1>📚 Jadwal Pelajaran SD 📚</h1>
             <p>Semangat belajar setiap hari! 🌟</p>
-            <button class="download-btn" id="downloadPDF">
-                📥 Download PDF
-            </button>
+            <div class="action-buttons">
+                <button class="btn download-btn" id="downloadPDF">
+                    📥 Download PDF
+                </button>
+                <button class="btn print-btn" id="printBtn">
+                    🖨️ Print
+                </button>
+                <button class="btn edit-btn" id="editBtn">
+                    ✏️ Edit Teks
+                </button>
+            </div>
             <div class="loading" id="loadingText">Membuat PDF... Mohon tunggu sebentar ⏳</div>
+        </div>
+        
+        <div class="edit-instructions" id="editInstructions">
+            📝 Mode Edit Aktif! Klik pada nama mata pelajaran untuk mengeditnya. Klik "Selesai Edit" untuk menyimpan perubahan.
         </div>
         
         <div class="schedule-grid">
@@ -475,6 +587,9 @@
     </div>
     
     <script>
+        let editMode = false;
+        
+        // Download PDF functionality
         document.getElementById('downloadPDF').addEventListener('click', function() {
             const button = this;
             const loadingText = document.getElementById('loadingText');
@@ -542,6 +657,138 @@
                 loadingText.style.display = 'none';
             });
         });
+        
+        // Print functionality
+        document.getElementById('printBtn').addEventListener('click', function() {
+            // Hide action buttons and edit instructions before printing
+            const actionButtons = document.querySelector('.action-buttons');
+            const editInstructions = document.getElementById('editInstructions');
+            
+            actionButtons.style.display = 'none';
+            editInstructions.style.display = 'none';
+            
+            // Print the page
+            window.print();
+            
+            // Restore buttons after printing
+            setTimeout(() => {
+                actionButtons.style.display = 'flex';
+                if (editMode) {
+                    editInstructions.style.display = 'block';
+                }
+            }, 100);
+        });
+        
+        // Edit functionality
+        document.getElementById('editBtn').addEventListener('click', function() {
+            const button = this;
+            const editInstructions = document.getElementById('editInstructions');
+            const subjectNames = document.querySelectorAll('.subject-name');
+            
+            if (!editMode) {
+                // Enter edit mode
+                editMode = true;
+                button.innerHTML = '✅ Selesai Edit';
+                button.style.background = 'linear-gradient(135deg, #00b894, #00a085)';
+                editInstructions.classList.add('show');
+                
+                // Make subject names editable
+                subjectNames.forEach(subject => {
+                    subject.contentEditable = true;
+                    subject.classList.add('editable');
+                    subject.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.blur();
+                        }
+                    });
+                });
+                
+                // Add edit mode styling to cards
+                document.querySelectorAll('.day-card').forEach(card => {
+                    card.classList.add('edit-mode');
+                });
+                
+            } else {
+                // Exit edit mode
+                editMode = false;
+                button.innerHTML = '✏️ Edit Teks';
+                button.style.background = 'linear-gradient(135deg, #fd79a8, #e84393)';
+                editInstructions.classList.remove('show');
+                
+                // Make subject names non-editable
+                subjectNames.forEach(subject => {
+                    subject.contentEditable = false;
+                    subject.classList.remove('editable');
+                });
+                
+                // Remove edit mode styling from cards
+                document.querySelectorAll('.day-card').forEach(card => {
+                    card.classList.remove('edit-mode');
+                });
+                
+                // Save changes to localStorage (optional)
+                saveScheduleData();
+            }
+        });
+        
+        // Save schedule data (in memory storage)
+        function saveScheduleData() {
+            const scheduleData = {};
+            document.querySelectorAll('.day-card').forEach(card => {
+                const dayClass = card.classList[1]; // Get day class (senin, selasa, etc.)
+                const subjects = [];
+                card.querySelectorAll('.subject-name').forEach(subject => {
+                    subjects.push(subject.textContent);
+                });
+                scheduleData[dayClass] = subjects;
+            });
+            
+            // Store in memory (you can modify this to use a database or file storage)
+            window.scheduleData = scheduleData;
+            
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.innerHTML = '✅ Jadwal berhasil disimpan!';
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #00b894;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                z-index: 1000;
+                font-weight: bold;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            `;
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => {
+                successMsg.remove();
+            }, 3000);
+        }
+        
+        // Load schedule data on page load (optional)
+        function loadScheduleData() {
+            if (window.scheduleData) {
+                Object.keys(window.scheduleData).forEach(dayClass => {
+                    const dayCard = document.querySelector(`.${dayClass}`);
+                    if (dayCard) {
+                        const subjects = dayCard.querySelectorAll('.subject-name');
+                        const savedSubjects = window.scheduleData[dayClass];
+                        subjects.forEach((subject, index) => {
+                            if (savedSubjects[index]) {
+                                subject.textContent = savedSubjects[index];
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        
+        // Load data when page loads
+        window.addEventListener('load', loadScheduleData);
     </script>
 </body>
 </html>
